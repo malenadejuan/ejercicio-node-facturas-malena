@@ -3,11 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { program } = require("commander");
-const facturas = require("./facturas.json");
-const { creaError, mandaErrores, notFoundError } = require("./utils/errores");
+const { mandaErrores, notFoundError } = require("./utils/errores");
 const chalk = require("chalk");
 const { getFactura, getFacturas } = require("./controladores/facturas");
-const { response } = require("express");
 
 program.option("-p, --puerto <puerto>", "Puerto para el servidor");
 program.parse(process.arg);

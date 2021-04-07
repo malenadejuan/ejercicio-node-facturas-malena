@@ -1,6 +1,3 @@
-const debug = require("debug");
-const chalk = require("chalk");
-
 const creaError = (mensaje, status) => {
   const error = new Error(mensaje);
   error.codigo = status;
