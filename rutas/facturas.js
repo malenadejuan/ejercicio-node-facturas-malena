@@ -1,11 +1,12 @@
+const { response } = require("express");
 const express = require("express");
 const router = express.Router();
-const { getFacturas, getFactura } = require("../controladores/facturas");
+const { getFacturas, getFactura, getIngresos, getGastos } = require("../controladores/facturas");
+
 
 router.get("/", (req, res, next) => {
-  console.log("Hola");
-  let facturas = getFacturas();
-  res.json(facturas);
+  const respuesta = getFacturas();
+  res.json(respuesta);
 });
 router.get("/factura/:id", (req, res, next) => {
   const id = +req.params.id;
@@ -15,6 +16,14 @@ router.get("/factura/:id", (req, res, next) => {
   } else {
     res.json(factura);
   }
+});
+router.get("/ingresos", (req, res, next) => {
+  const respuesta = getIngresos();
+  res.json(respuesta);
+});
+router.get("/gastos", (req, res, next) => {
+  const respuesta = getGastos();
+  res.json(respuesta);
 });
 
 module.exports = router;

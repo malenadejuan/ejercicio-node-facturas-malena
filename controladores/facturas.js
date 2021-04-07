@@ -1,7 +1,16 @@
 let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
-const getFacturas = () => facturasJSON;
+let objetoRespuesta = {
+  total: null,
+  datos: null
+};
+
+const getFacturas = () => {
+  objetoRespuesta.datos = facturasJSON;
+  objetoRespuesta.total = objetoRespuesta.length;
+  return objetoRespuesta;
+};
 const getFactura = id => {
   const factura = facturasJSON.find(factura => factura.id === id);
   const respuesta = {
@@ -16,8 +25,19 @@ const getFactura = id => {
   }
   return respuesta;
 };
-
+const getIngresos = () => {
+  objetoRespuesta.datos = facturasJSON.filter(factura => factura.tipo === "ingreso");
+  objetoRespuesta.total = objetoRespuesta.datos.length;
+  return objetoRespuesta;
+};
+const getGastos = () => {
+  objetoRespuesta.datos = facturasJSON.filter(factura => factura.tipo === "gasto");
+  objetoRespuesta.total = objetoRespuesta.datos.length;
+  return objetoRespuesta;
+};
 module.exports = {
   getFacturas,
-  getFactura
+  getFactura,
+  getIngresos,
+  getGastos
 };
