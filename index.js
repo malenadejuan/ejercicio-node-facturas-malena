@@ -28,7 +28,7 @@ server.on("error", err => {
 
 app.use(cors());
 app.use(morgan("dev"));
-app.get("/", (req, res, next) => {
+app.get("/facturas", (req, res, next) => {
   let facturas = getFacturas();
   res.json(facturas);
 });
@@ -40,6 +40,9 @@ app.get("/factura/:id", (req, res, next) => {
   } else {
     res.json(factura);
   }
+});
+app.get("/", (req, res, next) => {
+  res.redirect("/facturas");
 });
 app.use(notFoundError);
 app.use(mandaErrores);
