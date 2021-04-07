@@ -1,10 +1,13 @@
 const debug = require("debug")("facturas:root");
 const express = require("express");
+const cors = require("cors");
 const morgan = require("morgan");
 const { program } = require("commander");
 const facturas = require("./facturas.json");
 const { creaError, mandaErrores, notFoundError } = require("./utils/errores");
 const chalk = require("chalk");
+const { getFactura, getFacturas } = require("./controladores/facturas");
+const { response } = require("express");
 
 program.option("-p, --puerto <puerto>", "Puerto para el servidor");
 program.parse(process.arg);
@@ -25,18 +28,19 @@ server.on("error", err => {
   }
 });
 
+app.use(cors());
 app.use(morgan("dev"));
 app.get("/", (req, res, next) => {
+  let facturas = getFacturas();
   res.json(facturas);
 });
 app.get("/factura/:id", (req, res, next) => {
-  const { id } = req.params;
-  let factura = facturas.facturas.find(factura => factura.id === +id);
-  if (factura) {
-    res.json(factura);
-  } else {
-    const error = creaError("La factura no existe", 404);
+  const id = +req.params.id;
+  const { factura, error } = getFactura(id);
+  if (error) {
     next(error);
+  } else {
+    res.json(factura);
   }
 });
 app.use(notFoundError);
