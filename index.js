@@ -14,3 +14,12 @@ const puerto = options.puerto || process.env.PUERTO || 5000;
 const server = app.listen(puerto, () => {
   debug(`Servidor levantado en el puerto ${puerto}`);
 });
+
+app.use(morgan("dev"));
+app.get("/", (req, res, next) => {
+  res.json("Aquí iran las facturas");
+});
+app.get("/factura/:id", (req, res, next) => {
+  const { id } = req.params;
+  res.json(`Aquí irá la factura ${id}`);
+});
