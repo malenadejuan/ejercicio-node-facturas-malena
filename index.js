@@ -3,9 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { program } = require("commander");
-const { mandaErrores, notFoundError } = require("./utils/errores");
 const chalk = require("chalk");
-const { getFactura, getFacturas } = require("./controladores/facturas");
+const { mandaErrores, notFoundError } = require("./utils/errores");
+const rutasFacturas = require("./rutas/facturas");
 
 program.option("-p, --puerto <puerto>", "Puerto para el servidor");
 program.parse(process.arg);
@@ -28,19 +28,7 @@ server.on("error", err => {
 
 app.use(cors());
 app.use(morgan("dev"));
-app.get("/facturas", (req, res, next) => {
-  let facturas = getFacturas();
-  res.json(facturas);
-});
-app.get("/factura/:id", (req, res, next) => {
-  const id = +req.params.id;
-  const { factura, error } = getFactura(id);
-  if (error) {
-    next(error);
-  } else {
-    res.json(factura);
-  }
-});
+app.use("/facturas", rutasFacturas);
 app.get("/", (req, res, next) => {
   res.redirect("/facturas");
 });
