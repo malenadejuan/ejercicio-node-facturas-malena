@@ -98,10 +98,20 @@ const crearFactura = (nuevaFactura) => {
   }
   return respuesta;
 };
+const borrarFactura = idFactura => {
+  const facturaABorrar = compruebaId(idFactura);
+  const respuesta = {
+    factura: facturaABorrar,
+    error: null
+  };
+  facturasJSON = facturasJSON.filter(factura => factura.id !== facturaABorrar.id);
+  return respuesta;
+};
 module.exports = {
   getFacturas,
   getFactura,
   getIngresos,
   getGastos,
-  crearFactura
+  crearFactura,
+  borrarFactura
 };
