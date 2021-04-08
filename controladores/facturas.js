@@ -83,9 +83,25 @@ const getGastos = () => {
   objetoRespuesta.total = objetoRespuesta.datos.length;
   return objetoRespuesta;
 };
+const crearFactura = (nuevaFactura) => {
+  const respuesta = {
+    factura: null,
+    error: null
+  };
+  if (facturasJSON.find(factura => factura.numero === nuevaFactura.numero)) {
+    const error = creaError("La factura ya existe", 409);
+    respuesta.error = error;
+  }
+  if (!respuesta.error) {
+    facturasJSON.push(nuevaFactura);
+    respuesta.factura = nuevaFactura;
+  }
+  return respuesta;
+};
 module.exports = {
   getFacturas,
   getFactura,
   getIngresos,
-  getGastos
+  getGastos,
+  crearFactura
 };
