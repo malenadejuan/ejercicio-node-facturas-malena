@@ -2,7 +2,7 @@ const { response } = require("express");
 const express = require("express");
 const { check } = require("express-validator");
 const router = express.Router();
-const { getFacturas, getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura } = require("../controladores/facturas");
+const { getFacturas, getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura } = require("../controladores/facturas");
 const { mandaErrores } = require("../utils/errores");
 
 
@@ -37,7 +37,15 @@ router.post("/", (req, res, next) => {
   }
 });
 router.put("/factura/:id", (req, res, next) => {
-
+  const idFactura = +req.params.id;
+  const facturaNueva = req.body;
+  const { factura, error } = sustituirFactura(idFactura, facturaNueva);
+  if (error) {
+    next(error);
+  } else {
+    res.json(factura);
+  }
+}
 );
 router.patch("/factura/:id", (req, res, next) => {
   const idFactura = +req.params.id;

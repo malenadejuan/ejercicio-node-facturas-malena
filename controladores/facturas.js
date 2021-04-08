@@ -107,13 +107,14 @@ const borrarFactura = idFactura => {
   facturasJSON = facturasJSON.filter(factura => factura.id !== facturaABorrar.id);
   return respuesta;
 };
-const sustituirFactura = idFactura => {
+const sustituirFactura = (idFactura, nuevaFactura) => {
   const facturaASustituir = compruebaId(idFactura);
-  const respuesta = {
-    factura: facturaASustituir,
-    error: null
-  };
-
+  let respuesta;
+  if (facturaASustituir) {
+    respuesta = modificarFactura(idFactura, nuevaFactura);
+  } else {
+    respuesta = crearFactura(nuevaFactura);
+  }
   return respuesta;
 };
 const modificarFactura = (idFactura, facturaNueva) => {
