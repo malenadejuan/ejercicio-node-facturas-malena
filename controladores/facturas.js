@@ -1,10 +1,58 @@
 let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
+const facturaSchema = {
+  id: {
+    exists: {
+      errorMessage: "La factura debe tener un id"
+    }
+  },
+  numero: {
+    exists: {
+      errorMessage: "La factura debe tener un numero"
+    }
+  },
+  fecha: {
+    exists: {
+      errorMessage: "La factura debe tener una fecha"
+    }
+  },
+  base: {
+    isFloat: true,
+    exists: {
+      errorMessage: "La factura debe tener una base"
+    }
+  },
+  tipoIva: {
+    isInt: {
+      errorMessage: "El tipo IVA debe ser un número entero"
+    },
+    exists: {
+      errorMessage: "La factura debe tener un tipo IVA"
+    }
+  },
+  tipo: {
+    exists: {
+      errorMessage: "La factura debe tener un tipo (ingreso o gasto)",
+      notEmpty: true,
+    }
+  },
+  abonada: {
+    exists: {
+      errorMessage: "Se tiene que especificar si está abonada",
+    }
+  },
+  vencimiento: {
+    optional: true,
+  }
+};
+
 let objetoRespuesta = {
   total: null,
   datos: null
 };
+
+const compruebaId = idFactura => facturasJSON.find(factura => factura.id === +idFactura);
 
 const getFacturas = () => {
   objetoRespuesta.datos = facturasJSON;
