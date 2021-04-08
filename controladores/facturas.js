@@ -83,9 +83,63 @@ const getGastos = () => {
   objetoRespuesta.total = objetoRespuesta.datos.length;
   return objetoRespuesta;
 };
+const crearFactura = (nuevaFactura) => {
+  const respuesta = {
+    factura: null,
+    error: null
+  };
+  if (facturasJSON.find(factura => factura.numero === nuevaFactura.numero)) {
+    const error = creaError("La factura ya existe", 409);
+    respuesta.error = error;
+  }
+  if (!respuesta.error) {
+    facturasJSON.push(nuevaFactura);
+    respuesta.factura = nuevaFactura;
+  }
+  return respuesta;
+};
+const borrarFactura = idFactura => {
+  const facturaABorrar = compruebaId(idFactura);
+  const respuesta = {
+    factura: facturaABorrar,
+    error: null
+  };
+  facturasJSON = facturasJSON.filter(factura => factura.id !== facturaABorrar.id);
+  return respuesta;
+};
+const sustituirFactura = (idFactura, nuevaFactura) => {
+  const facturaASustituir = compruebaId(idFactura);
+  let respuesta;
+  if (facturaASustituir) {
+    respuesta = modificarFactura(idFactura, nuevaFactura);
+  } else {
+    respuesta = crearFactura(nuevaFactura);
+  }
+  return respuesta;
+};
+const modificarFactura = (idFactura, facturaNueva) => {
+  const facturaAModificar = compruebaId(idFactura);
+  const respuesta = {
+    factura: null,
+    error: null
+  };
+
+  const facturaModificada = {
+    ...facturaAModificar,
+    ...facturaNueva
+  };
+  facturasJSON[facturasJSON.indexOf(facturaAModificar)] = facturaModificada;
+  respuesta.factura = facturaModificada;
+  return respuesta;
+};
+
 module.exports = {
   getFacturas,
   getFactura,
   getIngresos,
-  getGastos
+  getGastos,
+  crearFactura,
+  borrarFactura,
+  sustituirFactura,
+  modificarFactura
 };
