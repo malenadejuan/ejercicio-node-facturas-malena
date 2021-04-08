@@ -107,11 +107,38 @@ const borrarFactura = idFactura => {
   facturasJSON = facturasJSON.filter(factura => factura.id !== facturaABorrar.id);
   return respuesta;
 };
+const sustituirFactura = idFactura => {
+  const facturaASustituir = compruebaId(idFactura);
+  const respuesta = {
+    factura: facturaASustituir,
+    error: null
+  };
+
+  return respuesta;
+};
+const modificarFactura = (idFactura, facturaNueva) => {
+  const facturaAModificar = compruebaId(idFactura);
+  const respuesta = {
+    factura: null,
+    error: null
+  };
+
+  const facturaModificada = {
+    ...facturaAModificar,
+    ...facturaNueva
+  };
+  facturasJSON[facturasJSON.indexOf(facturaAModificar)] = facturaModificada;
+  respuesta.factura = facturaModificada;
+  return respuesta;
+};
+
 module.exports = {
   getFacturas,
   getFactura,
   getIngresos,
   getGastos,
   crearFactura,
-  borrarFactura
+  borrarFactura,
+  sustituirFactura,
+  modificarFactura
 };
