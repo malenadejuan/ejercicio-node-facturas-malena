@@ -53,24 +53,41 @@ let objetoRespuesta = {
 };
 
 const compruebaId = idFactura => facturasJSON.find(factura => factura.id === +idFactura);
-
 const filtrarPorQueries = queries => {
-  const respuesta = {
-    resultado: null,
-    error: null
-  };
+  let { total, datos } = getFacturas();
   if (queries.abonadas) {
     if (queries.abonadas === "true") {
-      objetoRespuesta.datos = facturasJSON.filter(factura => factura.abonada === true);
+      datos = datos.filter(factura => factura.abonada === true);
     } else if (queries.abonadas === "false") {
-      objetoRespuesta.datos = facturasJSON.filter(factura => factura.abonada === false);
+      datos = datos.filter(factura => factura.abonada === false);
     }
-    objetoRespuesta.total = objetoRespuesta.datos.length;
   }
-  else {
-    objetoRespuesta = getFacturas();
+  if (queries.vencidas) {
+    let fecha = new Date().getTime();
+    if (queries.vencidas === "true") {
+      datos = datos.filter(factura => factura.vencimiento < fecha);
+    } else if (queries.vencidas === "false") {
+      datos = datos.filter(factura => factura.vencimiento > fecha);
+    }
   }
-  return objetoRespuesta;
+  if (queries.ordenPor) {
+    if (queries.ordenPor === "fecha") {
+      if (queries.orden === "desc") {
+        datos = datos.sort((a, b) => b.fecha - a.fecha);
+      } else {
+        datos = datos.sort((a, b) => a.fecha - b.fecha);
+      }
+    }
+    else if (queries.ordenPor === "base") {
+      if (queries.orden === "desc") {
+        datos = datos.sort((a, b) => b.base - a.base);
+      } else {
+        datos = datos.sort((a, b) => a.base - b.base);
+      }
+    }
+  }
+  total = datos.length;
+  return { total, datos };
 };
 
 const getFacturas = () => {
