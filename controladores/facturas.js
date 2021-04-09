@@ -1,7 +1,7 @@
 let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
-const facturaSchema = {
+/* const facturaSchema = {
   id: {
     exists: {
       errorMessage: "La factura debe tener un id"
@@ -46,7 +46,7 @@ const facturaSchema = {
     optional: true,
   }
 };
-
+*/
 let objetoRespuesta = {
   total: null,
   datos: null
@@ -54,9 +54,28 @@ let objetoRespuesta = {
 
 const compruebaId = idFactura => facturasJSON.find(factura => factura.id === +idFactura);
 
+const filtrarPorQueries = queries => {
+  const respuesta = {
+    resultado: null,
+    error: null
+  };
+  if (queries.abonadas) {
+    if (queries.abonadas === "true") {
+      objetoRespuesta.datos = facturasJSON.filter(factura => factura.abonada === true);
+    } else if (queries.abonadas === "false") {
+      objetoRespuesta.datos = facturasJSON.filter(factura => factura.abonada === false);
+    }
+    objetoRespuesta.total = objetoRespuesta.datos.length;
+  }
+  else {
+    objetoRespuesta = getFacturas();
+  }
+  return objetoRespuesta;
+};
+
 const getFacturas = () => {
   objetoRespuesta.datos = facturasJSON;
-  objetoRespuesta.total = objetoRespuesta.length;
+  objetoRespuesta.total = objetoRespuesta.datos.length;
   return objetoRespuesta;
 };
 const getFactura = id => {
@@ -134,6 +153,7 @@ const modificarFactura = (idFactura, facturaNueva) => {
 };
 
 module.exports = {
+  filtrarPorQueries,
   getFacturas,
   getFactura,
   getIngresos,
