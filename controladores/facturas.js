@@ -86,6 +86,18 @@ const filtrarPorQueries = queries => {
       }
     }
   }
+  let facturasPorPagina;
+  let pagina;
+  if (queries.nPorPagina) {
+    facturasPorPagina = +queries.nPorPagina;
+    if (queries.pagina && queries.pagina !== "0") {
+      pagina = +queries.pagina;
+      let inicio = (facturasPorPagina * pagina) - facturasPorPagina;
+      datos = datos.slice(inicio, (inicio + facturasPorPagina));
+    } else {
+      datos = datos.slice(0, facturasPorPagina);
+    }
+  }
   total = datos.length;
   return { total, datos };
 };
