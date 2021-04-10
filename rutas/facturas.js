@@ -2,12 +2,13 @@ const { response } = require("express");
 const express = require("express");
 const { check } = require("express-validator");
 const router = express.Router();
-const { getFacturas, getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura } = require("../controladores/facturas");
+const { getFacturas, getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries } = require("../controladores/facturas");
 const { mandaErrores } = require("../utils/errores");
 
 
 router.get("/", (req, res, next) => {
-  const respuesta = getFacturas();
+  const queries = req.query;
+  const respuesta = filtrarPorQueries(queries);
   res.json(respuesta);
 });
 router.get("/factura/:id", (req, res, next) => {

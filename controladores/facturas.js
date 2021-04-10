@@ -1,7 +1,7 @@
 let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
-const facturaSchema = {
+/* const facturaSchema = {
   id: {
     exists: {
       errorMessage: "La factura debe tener un id"
@@ -46,17 +46,65 @@ const facturaSchema = {
     optional: true,
   }
 };
-
+*/
 let objetoRespuesta = {
   total: null,
   datos: null
 };
 
 const compruebaId = idFactura => facturasJSON.find(factura => factura.id === +idFactura);
+const filtrarPorQueries = queries => {
+  let { total, datos } = getFacturas();
+  if (queries.abonadas) {
+    if (queries.abonadas === "true") {
+      datos = datos.filter(factura => factura.abonada === true);
+    } else if (queries.abonadas === "false") {
+      datos = datos.filter(factura => factura.abonada === false);
+    }
+  }
+  if (queries.vencidas) {
+    let fecha = new Date().getTime();
+    if (queries.vencidas === "true") {
+      datos = datos.filter(factura => factura.vencimiento < fecha);
+    } else if (queries.vencidas === "false") {
+      datos = datos.filter(factura => factura.vencimiento > fecha);
+    }
+  }
+  if (queries.ordenPor) {
+    if (queries.ordenPor === "fecha") {
+      if (queries.orden === "desc") {
+        datos = datos.sort((a, b) => b.fecha - a.fecha);
+      } else {
+        datos = datos.sort((a, b) => a.fecha - b.fecha);
+      }
+    }
+    else if (queries.ordenPor === "base") {
+      if (queries.orden === "desc") {
+        datos = datos.sort((a, b) => b.base - a.base);
+      } else {
+        datos = datos.sort((a, b) => a.base - b.base);
+      }
+    }
+  }
+  let facturasPorPagina;
+  let pagina;
+  if (queries.nPorPagina) {
+    facturasPorPagina = +queries.nPorPagina;
+    if (queries.pagina && queries.pagina !== "0") {
+      pagina = +queries.pagina;
+      let inicio = (facturasPorPagina * pagina) - facturasPorPagina;
+      datos = datos.slice(inicio, (inicio + facturasPorPagina));
+    } else {
+      datos = datos.slice(0, facturasPorPagina);
+    }
+  }
+  total = datos.length;
+  return { total, datos };
+};
 
 const getFacturas = () => {
   objetoRespuesta.datos = facturasJSON;
-  objetoRespuesta.total = objetoRespuesta.length;
+  objetoRespuesta.total = objetoRespuesta.datos.length;
   return objetoRespuesta;
 };
 const getFactura = id => {
@@ -134,6 +182,7 @@ const modificarFactura = (idFactura, facturaNueva) => {
 };
 
 module.exports = {
+  filtrarPorQueries,
   getFacturas,
   getFactura,
   getIngresos,
