@@ -1,42 +1,30 @@
 let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
-const facturaSchema = {
-  id: {
-    exists: {
-      errorMessage: "La factura debe tener un id"
-    }
-  },
-  numero: {
-    exists: {
-      errorMessage: "La factura debe tener un numero"
-    }
-  },
-  fecha: {
-    exists: {
-      errorMessage: "La factura debe tener una fecha"
-    }
-  },
-  base: {
-    exists: {
-      errorMessage: "La factura debe tener una base"
-    },
+const getFacturaSchema = completaOParcial => {
+  const id = {
+    notEmpty: true
+  };
+  const numero = {
+    isInt: true,
+    notEmpty: true,
+  };
+  const fecha = {
+    notEmpty: true
+  };
+  const base = {
     isFloat: {
-      errorMessage: "La base debe ser un número (puede ser decimal)"
-    }
-  },
-  tipoIva: {
+      errorMessage: "La base debe ser un número"
+    },
+    notEmpty: true
+  };
+  const tipoIva = {
     isInt: {
-      errorMessage: "El tipo IVA debe ser un número entero"
+      errorMessage: "El tipo de IVA debe ser un número entero"
     },
-    exists: {
-      errorMessage: "La factura debe tener un tipo IVA"
-    }
-  },
-  tipo: {
-    exists: {
-      errorMessage: "La factura debe tener un tipo"
-    },
+    notEmpty: true
+  };
+  const tipo = {
     notEmpty: true,
     custom: {
       options: (value => {
@@ -46,19 +34,59 @@ const facturaSchema = {
       }),
       errorMessage: "El tipo debe ser ingreso o gasto"
     }
-  },
-  abonada: {
-    exists: {
-      errorMessage: "Se tiene que especificar si está abonada",
-    },
+  };
+  const abonada = {
     isBoolean: {
-      errorMessage: "Abonada debe ser un valor boleano",
-    }
-  },
-  vencimiento: {
+      errorMessage: "El valor de abonada debe ser boleano"
+    },
+    notEmpty: true
+  };
+  const vencimiento = {
     optional: true,
+  };
+
+  switch (completaOParcial) {
+    case "completa":
+      id.exists = {
+        errorMessage: "La factura debe tener un id"
+      };
+      numero.exists = {
+        errorMessage: "La factura debe tener un numero"
+      };
+      fecha.exists = {
+        errorMessage: "La factura debe tener una base"
+      };
+      base.exists = {
+        errorMessage: "La base debe ser un número (puede ser decimal)"
+      };
+      tipoIva.exists = {
+        errorMessage: "El tipo IVA debe ser un número entero"
+      };
+      tipo.exists = {
+        errorMessage: "La factura debe tener un tipo"
+      };
+      abonada.exists = {
+        errorMessage: "La factura debe estar o no estar abonada"
+      };
+      break;
+    case "parcial":
+    default:
+      id.optional = true;
+      numero.optional = true;
+      fecha.optional = true;
+      base.optional = true;
+      tipoIva.optional = true;
+      tipo.optional = true;
+      abonada.optional = true;
+      break;
   }
+  return {
+    id, numero, fecha, base, tipoIva, tipo, abonada, vencimiento
+  };
 };
+
+const facturaCompletaSchema = getFacturaSchema("completa");
+const facturaParcialSchema = getFacturaSchema("parcial");
 
 let objetoRespuesta = {
   total: null,
@@ -195,7 +223,8 @@ const modificarFactura = (idFactura, facturaNueva) => {
 };
 
 module.exports = {
-  facturaSchema,
+  facturaCompletaSchema,
+  facturaParcialSchema,
   filtrarPorQueries,
   getFacturas,
   getFactura,

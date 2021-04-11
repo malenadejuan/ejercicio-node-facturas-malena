@@ -2,7 +2,7 @@ const { response } = require("express");
 const express = require("express");
 const { check, checkSchema } = require("express-validator");
 const router = express.Router();
-const { getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries, facturaSchema } = require("../controladores/facturas");
+const { getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries, facturaCompletaSchema, facturaParcialSchema } = require("../controladores/facturas");
 const { badRequestError } = require("../utils/errores");
 
 router.get("/", (req, res, next) => {
@@ -28,7 +28,7 @@ router.get("/gastos", (req, res, next) => {
   res.json(respuesta);
 });
 router.post("/",
-  checkSchema(facturaSchema),
+  checkSchema(facturaCompletaSchema),
   (req, res, next) => {
     const error400 = badRequestError(req);
     if (error400) {
@@ -42,27 +42,41 @@ router.post("/",
       res.json(factura);
     }
   });
-router.put("/factura/:id", (req, res, next) => {
-  const idFactura = +req.params.id;
-  const facturaNueva = req.body;
-  const { factura, error } = sustituirFactura(idFactura, facturaNueva);
-  if (error) {
-    next(error);
-  } else {
-    res.json(factura);
+router.put("/factura/:id",
+  checkSchema(facturaCompletaSchema),
+  (req, res, next) => {
+    const error400 = badRequestError(req);
+    if (error400) {
+      return next(error400);
+    }
+
+    console.log(facturaCompletaSchema);
+    const idFactura = +req.params.id;
+    const facturaNueva = req.body;
+    const { factura, error } = sustituirFactura(idFactura, facturaNueva);
+    if (error) {
+      next(error);
+    } else {
+      res.json(factura);
+    }
   }
-}
 );
-router.patch("/factura/:id", (req, res, next) => {
-  const idFactura = +req.params.id;
-  const facturaNueva = req.body;
-  const { factura, error } = modificarFactura(idFactura, facturaNueva);
-  if (error) {
-    next(error);
-  } else {
-    res.json(factura);
-  }
-});
+router.patch("/factura/:id",
+  checkSchema(facturaParcialSchema),
+  (req, res, next) => {
+    const error400 = badRequestError(req);
+    if (error400) {
+      return next(error400);
+    }
+    const idFactura = +req.params.id;
+    const facturaNueva = req.body;
+    const { factura, error } = modificarFactura(idFactura, facturaNueva);
+    if (error) {
+      next(error);
+    } else {
+      res.json(factura);
+    }
+  });
 router.delete("/factura/:id", (req, res, next) => {
   const idFactura = +req.params.id;
   const { factura, error } = borrarFactura(idFactura);
