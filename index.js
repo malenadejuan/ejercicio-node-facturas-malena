@@ -1,15 +1,13 @@
+require("dotenv").config();
 const debug = require("debug")("facturas:root");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { program } = require("commander");
 const chalk = require("chalk");
+const options = require("./parametrosCLI");
 const { mandaErrores, notFoundError } = require("./utils/errores");
 const rutasFacturas = require("./rutas/facturas");
-
-program.option("-p, --puerto <puerto>", "Puerto para el servidor");
-program.parse(process.arg);
-const options = program.opts();
 
 const app = express();
 
