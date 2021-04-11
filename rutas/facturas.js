@@ -33,7 +33,7 @@ router.get("/gastos", (req, res, next) => {
   const respuesta = getGastos();
   res.json(respuesta);
 });
-router.post("/",
+router.post("/factura",
   checkSchema(facturaCompletaSchema),
   (req, res, next) => {
     const error400 = badRequestError(req);

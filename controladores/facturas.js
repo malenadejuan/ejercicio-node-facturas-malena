@@ -178,6 +178,8 @@ const crearFactura = (nuevaFactura) => {
     error: null
   };
   if (facturasJSON.find(factura => factura.numero === nuevaFactura.numero)) {
+    const { datos: facturas } = getFacturas();
+    nuevaFactura.id = facturas[facturas.length - 1].id + 1;
     const error = creaError("La factura ya existe", 409);
     respuesta.error = error;
   }
