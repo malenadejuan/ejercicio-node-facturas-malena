@@ -181,6 +181,7 @@ const crearFactura = (nuevaFactura) => {
     const { datos: facturas } = getFacturas();
     nuevaFactura.id = facturas[facturas.length - 1].id + 1;
     const error = creaError("La factura ya existe", 409);
+    console.log("Entro aqui");
     respuesta.error = error;
   }
   if (!respuesta.error) {
