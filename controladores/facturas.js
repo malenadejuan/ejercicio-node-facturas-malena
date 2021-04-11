@@ -1,7 +1,7 @@
 let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
-/* const facturaSchema = {
+const facturaSchema = {
   id: {
     exists: {
       errorMessage: "La factura debe tener un id"
@@ -18,9 +18,11 @@ const { creaError } = require("../utils/errores");
     }
   },
   base: {
-    isFloat: true,
     exists: {
       errorMessage: "La factura debe tener una base"
+    },
+    isFloat: {
+      errorMessage: "La base debe ser un número (puede ser decimal)"
     }
   },
   tipoIva: {
@@ -33,8 +35,16 @@ const { creaError } = require("../utils/errores");
   },
   tipo: {
     exists: {
-      errorMessage: "La factura debe tener un tipo (ingreso o gasto)",
-      notEmpty: true,
+      errorMessage: "La factura debe tener un tipo"
+    },
+    notEmpty: true,
+    custom: {
+      options: (value => {
+        if ((value === "ingreso" || value == "gasto")) {
+          return value;
+        }
+      }),
+      errorMessage: "El tipo debe ser ingreso o gasto"
     }
   },
   abonada: {
@@ -46,7 +56,7 @@ const { creaError } = require("../utils/errores");
     optional: true,
   }
 };
-*/
+
 let objetoRespuesta = {
   total: null,
   datos: null
@@ -182,6 +192,7 @@ const modificarFactura = (idFactura, facturaNueva) => {
 };
 
 module.exports = {
+  facturaSchema,
   filtrarPorQueries,
   getFacturas,
   getFactura,
