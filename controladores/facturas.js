@@ -50,6 +50,9 @@ const facturaSchema = {
   abonada: {
     exists: {
       errorMessage: "Se tiene que especificar si está abonada",
+    },
+    isBoolean: {
+      errorMessage: "Abonada debe ser un valor boleano",
     }
   },
   vencimiento: {
