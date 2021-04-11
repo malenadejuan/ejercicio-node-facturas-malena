@@ -223,6 +223,7 @@ const modificarFactura = (idFactura, facturaNueva) => {
 };
 
 module.exports = {
+  compruebaId,
   facturaCompletaSchema,
   facturaParcialSchema,
   filtrarPorQueries,
