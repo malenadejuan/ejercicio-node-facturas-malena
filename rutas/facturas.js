@@ -2,7 +2,7 @@ const express = require("express");
 const { check, checkSchema } = require("express-validator");
 const router = express.Router();
 const { getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries, facturaCompletaSchema, facturaParcialSchema, compruebaId } = require("../controladores/facturas");
-const { getFacturas } = require("../controladores/facturasSQL");
+const { getFacturas: getFacturasSQL, getFactura: getFacturaSQL } = require("../controladores/facturasSQL");
 const options = require("../parametrosCLI");
 const { badRequestError, idError } = require("../utils/errores");
 
@@ -16,7 +16,7 @@ if (options.datos === "json") {
 
 router.get("/", async (req, res, next) => {
   const queries = req.query;
-  const respuesta = bd ? await getFacturas(queries) : filtrarPorQueries(queries);
+  const respuesta = bd ? await getFacturasSQL(queries, "") : filtrarPorQueries(queries);
   res.json(respuesta);
 });
 router.get("/factura/:id",
@@ -27,7 +27,7 @@ router.get("/factura/:id",
       return next(errorId);
     }
     const id = +req.params.id;
-    const { factura, error } = getFactura(id);
+    const { factura, error } = bd ? await getFacturaSQL(id) : getFactura(id);
     if (error) {
       next(error);
     } else {
@@ -35,11 +35,13 @@ router.get("/factura/:id",
     }
   });
 router.get("/ingresos", async (req, res, next) => {
-  const respuesta = getIngresos();
+  const queries = req.query;
+  const respuesta = bd ? await getFacturasSQL(queries, "ingreso") : getIngresos();
   res.json(respuesta);
 });
 router.get("/gastos", async (req, res, next) => {
-  const respuesta = getGastos();
+  const queries = req.query;
+  const respuesta = bd ? await getFacturasSQL(queries, "gasto") : getGastos();
   res.json(respuesta);
 });
 router.post("/factura",

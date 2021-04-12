@@ -1,8 +1,9 @@
 require("dotenv").config();
 const debug = require("debug")("facturas:sql");
 const Factura = require("../db/modelos/factura");
+const { creaError } = require("../utils/errores");
 
-const respuestaListados = datos => ({
+const respuesta = datos => ({
   total: datos.length,
   datos
 });
@@ -19,7 +20,23 @@ const getFacturas = async (queries, tipo) => {
   }
   const facturas = await Factura.findAll(condicion);
   console.log("Estoy usando base de datos");
-  return respuestaListados(facturas);
+  return respuesta(facturas);
+};
+
+const getFactura = async id => {
+  const factura = await Factura.findByPk(id);
+
+  const respuesta = {
+    factura: null,
+    error: null
+  };
+  if (factura) {
+    respuesta.factura = factura;
+  } else {
+    const error = creaError("La factura no existe", 404);
+    respuesta.error = error;
+  }
+  return respuesta;
 };
 /*
 Factura.findAll().then(facturas => {
@@ -39,5 +56,6 @@ Factura.findAll({
 }); */
 
 module.exports = {
-  getFacturas
+  getFacturas,
+  getFactura
 };
