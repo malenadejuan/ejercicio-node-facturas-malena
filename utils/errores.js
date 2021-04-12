@@ -1,5 +1,4 @@
 const { validationResult } = require("express-validator");
-const { facturaSchema } = require("../controladores/facturas");
 
 const creaError = (mensaje, status) => {
   const error = new Error(mensaje);

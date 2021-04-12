@@ -132,6 +132,7 @@ const filtrarPorQueries = queries => {
 const getFacturas = () => {
   objetoRespuesta.datos = facturasJSON;
   objetoRespuesta.total = objetoRespuesta.datos.length;
+  console.log("Estoy usando el archivo json");
   return objetoRespuesta;
 };
 const getFactura = id => {
@@ -165,7 +166,7 @@ const crearFactura = (nuevaFactura) => {
   };
   if (facturasJSON.find(factura => factura.numero === nuevaFactura.numero)) {
     const error = creaError("La factura ya existe", 409);
-    console.log("Entro aqui");
+
     respuesta.error = error;
   }
   if (!respuesta.error) {

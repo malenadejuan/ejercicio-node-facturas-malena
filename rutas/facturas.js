@@ -1,18 +1,27 @@
-const { response } = require("express");
 const express = require("express");
 const { check, checkSchema } = require("express-validator");
 const router = express.Router();
 const { getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries, facturaCompletaSchema, facturaParcialSchema, compruebaId } = require("../controladores/facturas");
+const { getFacturas } = require("../controladores/facturasSQL");
+const options = require("../parametrosCLI");
 const { badRequestError, idError } = require("../utils/errores");
 
-router.get("/", (req, res, next) => {
+let bd = true;
+
+if (options.datos === "json") {
+  bd = false;
+} else if (options.datos === "bd") {
+  bd = true;
+}
+
+router.get("/", async (req, res, next) => {
   const queries = req.query;
-  const respuesta = filtrarPorQueries(queries);
+  const respuesta = bd ? await getFacturas(queries) : filtrarPorQueries(queries);
   res.json(respuesta);
 });
 router.get("/factura/:id",
   check("id", "La factura no existe").custom(compruebaId),
-  (req, res, next) => {
+  async (req, res, next) => {
     const errorId = idError(req);
     if (errorId) {
       return next(errorId);
@@ -25,17 +34,17 @@ router.get("/factura/:id",
       res.json(factura);
     }
   });
-router.get("/ingresos", (req, res, next) => {
+router.get("/ingresos", async (req, res, next) => {
   const respuesta = getIngresos();
   res.json(respuesta);
 });
-router.get("/gastos", (req, res, next) => {
+router.get("/gastos", async (req, res, next) => {
   const respuesta = getGastos();
   res.json(respuesta);
 });
 router.post("/factura",
   checkSchema(facturaCompletaSchema),
-  (req, res, next) => {
+  async (req, res, next) => {
     const error400 = badRequestError(req);
     if (error400) {
       console.log(error400);
@@ -52,7 +61,7 @@ router.post("/factura",
 router.put("/factura/:id",
   checkSchema(facturaCompletaSchema),
   check("id", "La factura no existe").custom(compruebaId),
-  (req, res, next) => {
+  async (req, res, next) => {
     const errorId = idError(req);
     if (errorId) {
       return next(errorId);
@@ -74,7 +83,7 @@ router.put("/factura/:id",
 router.patch("/factura/:id",
   checkSchema(facturaParcialSchema),
   check("id", "La factura no existe").custom(compruebaId),
-  (req, res, next) => {
+  async (req, res, next) => {
     const errorId = idError(req);
     if (errorId) {
       return next(errorId);
@@ -94,7 +103,7 @@ router.patch("/factura/:id",
   });
 router.delete("/factura/:id",
   check("id", "La factura no existe").custom(compruebaId),
-  (req, res, next) => {
+  async (req, res, next) => {
     const errorId = idError(req);
     if (errorId) {
       return next(errorId);

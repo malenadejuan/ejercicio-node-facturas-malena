@@ -10,6 +10,4 @@ const sequelize = new Sequelize({
   logging: mensaje => console.log(mensaje)
 });
 
-sequelize.authenticate().then(console.log("Hola"));
-
 module.exports = sequelize;
