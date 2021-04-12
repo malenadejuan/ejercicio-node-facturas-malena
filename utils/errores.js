@@ -17,12 +17,8 @@ const badRequestError = (req) => {
   let error;
   if (!errores.isEmpty()) {
     const mapaErrores = errores.mapped();
-    for (let propiedad in facturaSchema) {
-      if (mapaErrores[propiedad]) {
-        error = creaError(`La factura no tiene la forma correcta. ${mapaErrores[propiedad].msg}`, 400);
-        console.log(errores.mapped());
-      }
-    }
+    error = creaError("La factura no tiene la forma correcta", 400);
+    console.log(errores.mapped());
   }
   return error;
 };

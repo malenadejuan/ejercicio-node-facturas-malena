@@ -38,6 +38,7 @@ router.post("/factura",
   (req, res, next) => {
     const error400 = badRequestError(req);
     if (error400) {
+      console.log(error400);
       return next(error400);
     }
     const nuevaFactura = req.body;

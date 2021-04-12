@@ -9,11 +9,12 @@ const Factura = sequelize.define("Factura", {
   },
   numero: {
     type: DataTypes.STRING(15),
-    unique: true,
     allowNull: false
   },
   fecha: {
-    type: DataTypes.DATEONLY,
+    type: DataTypes.STRING(15),
+    unique: true,
+    allowNull: false
   },
   base: {
     type: DataTypes.FLOAT(10, 2)
@@ -23,20 +24,16 @@ const Factura = sequelize.define("Factura", {
   },
   tipo: {
     type: DataTypes.ENUM,
-    values: ["ingreso", "gasto"]
+    values: ["ingreso", "gasto"],
+    allowNull: false
   },
   abonada: {
     type: DataTypes.BOOLEAN,
-    defaultValue: 0
+    defaultValue: false,
+    allowNull: false
   },
-  concepto: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  vencimiento: {
-    type: DataTypes.DATEONLY,
-    allowNull: true
-  },
+  concepto: DataTypes.TEXT,
+  vencimiento: DataTypes.DATEONLY
 },
   {
     tableName: "facturas",
