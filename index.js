@@ -8,6 +8,7 @@ const chalk = require("chalk");
 const options = require("./parametrosCLI");
 const { mandaErrores, notFoundError } = require("./utils/errores");
 const rutasFacturas = require("./rutas/facturas");
+const rutasProyectos = require("./rutas/proyectos");
 
 const app = express();
 
@@ -31,5 +32,6 @@ app.use("/facturas", rutasFacturas);
 app.get("/", (req, res, next) => {
   res.redirect("/facturas");
 });
+app.use("/proyectos", rutasProyectos);
 app.use(notFoundError);
 app.use(mandaErrores);
