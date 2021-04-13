@@ -2,9 +2,6 @@ let facturasJSON = require("../facturas.json").facturas;
 const { creaError } = require("../utils/errores");
 
 const getFacturaSchema = completaOParcial => {
-  const id = {
-    notEmpty: true
-  };
   const numero = {
     isInt: true,
     notEmpty: true,
@@ -27,11 +24,7 @@ const getFacturaSchema = completaOParcial => {
   const tipo = {
     notEmpty: true,
     custom: {
-      options: (value => {
-        if ((value === "ingreso" || value == "gasto")) {
-          return value;
-        }
-      }),
+      options: value => value === "ingreso" || value == "gasto",
       errorMessage: "El tipo debe ser ingreso o gasto"
     }
   };
@@ -41,15 +34,9 @@ const getFacturaSchema = completaOParcial => {
     },
     notEmpty: true
   };
-  const vencimiento = {
-    optional: true,
-  };
 
   switch (completaOParcial) {
     case "completa":
-      id.exists = {
-        errorMessage: "La factura debe tener un id"
-      };
       numero.exists = {
         errorMessage: "La factura debe tener un numero"
       };
@@ -71,7 +58,6 @@ const getFacturaSchema = completaOParcial => {
       break;
     case "parcial":
     default:
-      id.optional = true;
       numero.optional = true;
       fecha.optional = true;
       base.optional = true;
@@ -81,7 +67,7 @@ const getFacturaSchema = completaOParcial => {
       break;
   }
   return {
-    id, numero, fecha, base, tipoIva, tipo, abonada, vencimiento
+    numero, fecha, base, tipoIva, tipo, abonada,
   };
 };
 
@@ -146,6 +132,7 @@ const filtrarPorQueries = queries => {
 const getFacturas = () => {
   objetoRespuesta.datos = facturasJSON;
   objetoRespuesta.total = objetoRespuesta.datos.length;
+  console.log("Estoy usando el archivo json");
   return objetoRespuesta;
 };
 const getFactura = id => {
@@ -178,12 +165,13 @@ const crearFactura = (nuevaFactura) => {
     error: null
   };
   if (facturasJSON.find(factura => factura.numero === nuevaFactura.numero)) {
-    const { datos: facturas } = getFacturas();
-    nuevaFactura.id = facturas[facturas.length - 1].id + 1;
     const error = creaError("La factura ya existe", 409);
+
     respuesta.error = error;
   }
   if (!respuesta.error) {
+    const { datos: facturas } = getFacturas();
+    nuevaFactura.id = facturas[facturas.length - 1].id + 1;
     facturasJSON.push(nuevaFactura);
     respuesta.factura = nuevaFactura;
   }
