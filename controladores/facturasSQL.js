@@ -28,6 +28,12 @@ const getFacturas = async (queries, tipo) => {
   if (queries.orden === "desc") {
     condicion.order[0].push("DESC");
   }
+  if (queries.nPorPagina) {
+    condicion.limit = +queries.nPorPagina;
+    if (queries.pagina) {
+      condicion.offset = (+queries.nPorPagina * +queries.pagina) - +queries.nPorPagina;
+    }
+  }
   const facturas = await Factura.findAll(condicion);
   console.log("Estoy usando base de datos");
   return respuesta(facturas);
