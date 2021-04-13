@@ -1,5 +1,6 @@
 require("dotenv").config();
 const debug = require("debug")("facturas:sql");
+const { Op } = require("sequelize");
 const Factura = require("../db/modelos/factura");
 const { creaError } = require("../utils/errores");
 
@@ -9,14 +10,23 @@ const respuesta = datos => ({
 });
 
 const getFacturas = async (queries, tipo) => {
+  const hoy = new Date().getTime();
+  let filtros;
   const condicion = {
-    where: {}
+    where: {},
+    order: [[queries.ordenPor === "fecha" ? "fecha" : (queries.ordenPor === "base" ? "base" : "id")]]
   };
   if (tipo === "ingreso" || tipo === "gasto") {
     condicion.where.tipo = tipo;
   }
   if (queries.abonadas) {
     condicion.where.abonada = queries.abonadas === "true";
+  }
+  if (queries.vencidas) {
+    condicion.where.vencimiento = queries.vencidas === "false" ? { [Op.gt]: hoy } : { [Op.lt]: hoy };
+  }
+  if (queries.orden === "desc") {
+    condicion.order[0].push("DESC");
   }
   const facturas = await Factura.findAll(condicion);
   console.log("Estoy usando base de datos");

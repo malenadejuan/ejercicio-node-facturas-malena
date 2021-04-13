@@ -86,16 +86,14 @@ router.patch("/factura/:id",
   checkSchema(facturaParcialSchema),
   check("id", "La factura no existe").custom(compruebaId),
   async (req, res, next) => {
-    if (bd === false) {
-      const errorId = idError(req);
-      if (errorId) {
-        return next(errorId);
-      }
+    const errorId = idError(req);
+    if (errorId) {
+      return next(errorId);
     }
-    /*  const error400 = badRequestError(req);
-     if (error400) {
-       return next(error400);
-     } */
+    const error400 = badRequestError(req);
+    if (error400) {
+      return next(error400);
+    }
     const idFactura = +req.params.id;
     const facturaNueva = req.body;
     const { factura, error } = bd ? await modificarFacturaSQL(idFactura, facturaNueva) : modificarFactura(idFactura, facturaNueva);
