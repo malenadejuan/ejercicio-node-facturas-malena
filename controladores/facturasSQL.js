@@ -38,24 +38,85 @@ const getFactura = async id => {
   }
   return respuesta;
 };
-/*
-Factura.findAll().then(facturas => {
-  facturas.forEach(factura => console.log(factura.toJSON()));
-}
-);
-Factura.findByPk(1).then(factura => console.log(factura.toJSON()));
 
-Factura.findAll({
-  where: {
-    abonada: true
+const crearFactura = async (nuevaFactura) => {
+  const respuesta = {
+    factura: null,
+    error: null
+  };
+  const facturaRepetida = await Factura.findOne({
+    where: {
+      numero: nuevaFactura.numero
+    }
+  });
+  if (facturaRepetida) {
+    const error = creaError("La factura ya existe", 409);
+    respuesta.error = error;
   }
-}).then(facturas => {
-  for (const factura of facturas) {
-    console.log(factura.toJSON());
+  if (!respuesta.error) {
+    Factura.create(nuevaFactura);
+    respuesta.factura = nuevaFactura;
   }
-}); */
+  return respuesta;
+};
+
+const modificarFactura = async (idFactura, nuevaFactura) => {
+  let respuesta = {
+    factura: null,
+    error: null
+  };
+  const facturaAModificar = await Factura.findByPk(idFactura);
+  if (!facturaAModificar) {
+    respuesta.error = creaError("La factura no existe", 404);
+  } else {
+    respuesta.factura = facturaAModificar;
+    Factura.update(nuevaFactura, {
+      where: {
+        id: idFactura
+      }
+    });
+  }
+  return respuesta;
+};
+
+const sustituirFactura = async (idFactura, nuevaFactura) => {
+  let respuesta = {
+    factura: null,
+    error: null
+  };
+  const { factura: facturaAModificar } = await getFactura(idFactura);
+  if (facturaAModificar) {
+    respuesta = await modificarFactura(idFactura, nuevaFactura);
+  } else {
+    respuesta = await crearFactura(nuevaFactura);
+  }
+  return respuesta;
+};
+
+const borrarFactura = async (idFactura) => {
+  let respuesta = {
+    factura: null,
+    error: null
+  };
+  const facturaABorrar = await Factura.findByPk(idFactura);
+  if (!facturaABorrar) {
+    respuesta.error = creaError("La factura no existe", 404);
+  } else {
+    respuesta.factura = facturaABorrar;
+    Factura.destroy({
+      where: {
+        id: idFactura
+      }
+    });
+  }
+  return respuesta;
+};
 
 module.exports = {
   getFacturas,
-  getFactura
+  getFactura,
+  crearFactura,
+  modificarFactura,
+  sustituirFactura,
+  borrarFactura
 };

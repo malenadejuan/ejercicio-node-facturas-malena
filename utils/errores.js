@@ -17,7 +17,7 @@ const badRequestError = (req) => {
   if (!errores.isEmpty()) {
     const mapaErrores = errores.mapped();
     error = creaError("La factura no tiene la forma correcta", 400);
-    console.log(errores.mapped());
+    console.log(mapaErrores);
   }
   return error;
 };
