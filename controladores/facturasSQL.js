@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const Factura = require("../db/modelos/factura");
 const { creaError } = require("../utils/errores");
 
-const compruebaId = idFactura => {
+const compruebaId = () => {
   const { factura } = getFactura();
   return factura;
 };

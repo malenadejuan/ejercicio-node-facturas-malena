@@ -5,7 +5,8 @@ const debug = require("debug")("proyectos:mongoDB");
 
 mongoose.connect("mongodb://localhost/proyectos", {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 }, err => {
   if (err) {
     debug(chalk.red("No hay conexión con la base de datos"));
