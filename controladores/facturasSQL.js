@@ -4,6 +4,11 @@ const { Op } = require("sequelize");
 const Factura = require("../db/modelos/factura");
 const { creaError } = require("../utils/errores");
 
+const compruebaId = idFactura => {
+  const { factura } = getFactura();
+  return factura;
+};
+
 const respuesta = datos => ({
   total: datos.length,
   datos
@@ -11,7 +16,6 @@ const respuesta = datos => ({
 
 const getFacturas = async (queries, tipo) => {
   const hoy = new Date().getTime();
-  let filtros;
   const condicion = {
     where: {},
     order: [[queries.ordenPor === "fecha" ? "fecha" : (queries.ordenPor === "base" ? "base" : "id")]]
@@ -134,5 +138,6 @@ module.exports = {
   crearFactura,
   modificarFactura,
   sustituirFactura,
-  borrarFactura
+  borrarFactura,
+  compruebaId
 };

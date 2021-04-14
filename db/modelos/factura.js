@@ -33,7 +33,7 @@ const Factura = sequelize.define("Factura", {
     allowNull: false
   },
   concepto: DataTypes.TEXT,
-  vencimiento: DataTypes.DATEONLY
+  vencimiento: DataTypes.STRING(15)
 },
   {
     tableName: "facturas",

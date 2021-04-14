@@ -80,6 +80,7 @@ let objetoRespuesta = {
 };
 
 const compruebaId = idFactura => facturasJSON.find(factura => factura.id === +idFactura);
+
 const filtrarPorQueries = queries => {
   let { total, datos } = getFacturas();
   if (queries.abonadas) {
