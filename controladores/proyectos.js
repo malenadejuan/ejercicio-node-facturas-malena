@@ -5,9 +5,12 @@ const respuesta = proyectos => ({
   proyectos
 });
 
-const getProyectos = async (queries) => {
+const getProyectos = async (queries, tipo) => {
   const hoy = new Date().getTime();
   const condicion = {};
+  if (tipo) {
+    condicion.estado = tipo;
+  }
   if (queries.tecnologias) {
     let tecnologias = queries.tecnologias.split(",");
     condicion.tecnologias = { $all: tecnologias };

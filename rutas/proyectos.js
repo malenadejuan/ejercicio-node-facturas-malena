@@ -4,19 +4,22 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   const queries = req.query;
-  const respuesta = await getProyectos(queries);
+  const respuesta = await getProyectos(queries, null);
   res.json(respuesta);
 });
-router.get("/pendientes", (req, res, next) => {
-  const respuesta = "Aquí irá un listado de proyectos con estado pendiente";
+router.get("/pendientes", async (req, res, next) => {
+  const queries = req.query;
+  const respuesta = await getProyectos(queries, "pendiente");
   res.json(respuesta);
 });
-router.get("/en-progreso", (req, res, next) => {
-  const respuesta = "Aquí irá una lista con los proyectos con estado wip";
+router.get("/en-progreso", async (req, res, next) => {
+  const queries = req.query;
+  const respuesta = await getProyectos(queries, "wip");
   res.json(respuesta);
 });
-router.get("/finalizados", (req, res, next) => {
-  const respuesta = "Aquí irá un listado de los proyectos con estado finalizado";
+router.get("/finalizados", async (req, res, next) => {
+  const queries = req.query;
+  const respuesta = await getProyectos(queries, "finalizado");
   res.json(respuesta);
 });
 router.get("/proyecto/:idProyecto", (req, res, next) => {
