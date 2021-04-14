@@ -11,7 +11,6 @@ const respuesta = datos => ({
 
 const getFacturas = async (queries, tipo) => {
   const hoy = new Date().getTime();
-  let filtros;
   const condicion = {
     where: {},
     order: [[queries.ordenPor === "fecha" ? "fecha" : (queries.ordenPor === "base" ? "base" : "id")]]
