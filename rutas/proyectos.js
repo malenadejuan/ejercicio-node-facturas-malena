@@ -1,6 +1,6 @@
 const express = require("express");
 const { check } = require("express-validator");
-const { getProyectos, getProyecto, compruebaId, crearProyecto } = require("../controladores/proyectos");
+const { getProyectos, getProyecto, compruebaId, crearProyecto, borrarProyecto, modificarProyecto, sustituirProyecto } = require("../controladores/proyectos");
 const { idError } = require("../utils/errores");
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get("/proyecto/:idProyecto", async (req, res, next) => {
   const id = req.params.idProyecto;
   const respuesta = await getProyecto(id);
   if (respuesta.error) {
-    return next(respuesta.error);
+    next(respuesta.error);
   } else {
     res.json(respuesta.proyecto);
   }
@@ -36,24 +36,40 @@ router.get("/proyecto/:idProyecto", async (req, res, next) => {
 router.post("/proyecto", async (req, res, next) => {
   const nuevoProyecto = req.body;
   const respuesta = await crearProyecto(nuevoProyecto);
-  console.log(respuesta);
   if (respuesta.error) {
-    return next(respuesta.error);
+    next(respuesta.error);
   } else {
     res.json(respuesta.proyecto);
   }
 });
-router.put("/proyecto/:idProyecto", (req, res, next) => {
-  const respuesta = "Sustituir un proyecto por otro a partir de su id, devuelve el proyecto nuevo";
-  res.json(respuesta);
+router.put("/proyecto/:idProyecto", async (req, res, next) => {
+  const idProyecto = req.params.idProyecto;
+  const nuevoProyecto = req.body;
+  const respuesta = await sustituirProyecto(idProyecto, nuevoProyecto);
+  if (respuesta.error) {
+    next(respuesta.error);
+  } else {
+    res.json(respuesta);
+  }
 });
-router.patch("/proyecto/:idProyecto", (req, res, next) => {
-  const respuesta = "Modificar una parte de un proyecto a partir de su id, devuelve el proyecto modificado";
-  res.json(respuesta);
+router.patch("/proyecto/:idProyecto", async (req, res, next) => {
+  const idProyecto = req.params.idProyecto;
+  const cambios = req.body;
+  const respuesta = await modificarProyecto(idProyecto, cambios);
+  if (respuesta.error) {
+    next(respuesta.error);
+  } else {
+    res.json(respuesta);
+  }
 });
-router.delete("/proyecto/:idProyecto", (req, res, next) => {
-  const respuesta = "Borrar un proyecto a partir de su id, devuelve el proyecto borrado";
-  res.json(respuesta);
+router.delete("/proyecto/:idProyecto", async (req, res, next) => {
+  const idProyecto = req.params.idProyecto;
+  const respuesta = await borrarProyecto(idProyecto);
+  if (respuesta.error) {
+    next(respuesta.error);
+  } else {
+    res.json(respuesta);
+  }
 });
 
 module.exports = router;

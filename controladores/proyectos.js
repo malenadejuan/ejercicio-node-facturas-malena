@@ -1,4 +1,6 @@
+const debug = require("debug")("proyectos:control");
 const chalk = require("chalk");
+const { updateOne } = require("../db/modelos/proyecto");
 const Proyecto = require("../db/modelos/proyecto");
 const { creaError } = require("../utils/errores");
 
@@ -6,10 +8,6 @@ const respuesta = proyectos => ({
   total: proyectos.length,
   proyectos
 });
-const respuestaOError = {
-  proyecto: null,
-  error: null
-};
 
 const getProyectos = async (queries, tipo) => {
   const hoy = new Date().getTime();
@@ -35,15 +33,26 @@ const getProyectos = async (queries, tipo) => {
 };
 
 const getProyecto = async (idProyecto) => {
-  let proyecto = await Proyecto.findById(idProyecto);
-  respuestaOError.proyecto = proyecto;
-  return respuestaOError;
+  let respuesta = {};
+  const proyecto = await Proyecto
+    .findById(idProyecto)
+    .catch(err => debug(chalk.red.bold(err)));
+  if (proyecto) {
+    respuesta.proyecto = proyecto;
+  } else {
+    const error = creaError("El proyecto no existe", 404);
+    respuesta.error = error;
+  }
+  return respuesta;
 };
 
 const crearProyecto = async (nuevoProyecto) => {
-  const proyectoRepetido = await Proyecto.findOne({
-    nombre: nuevoProyecto.nombre
-  });
+  let respuesta = {};
+  const proyectoRepetido = await Proyecto
+    .findOne({
+      nombre: nuevoProyecto.nombre
+    })
+    .catch(err => debug(chalk.red.bold(err)));
   if (proyectoRepetido) {
     const error = creaError("El proyecto ya existe", 409);
     respuesta.error = error;
@@ -54,8 +63,54 @@ const crearProyecto = async (nuevoProyecto) => {
   return respuesta;
 };
 
+const sustituirProyecto = async (idProyecto, nuevoProyecto) => {
+  let respuesta = {};
+  const proyectoEncontrado = await Proyecto
+    .findById(idProyecto)
+    .catch(err => debug(chalk.red.bold(err)));
+  if (proyectoEncontrado) {
+    await proyectoEncontrado.updateOne(nuevoProyecto);
+    respuesta.proyecto = nuevoProyecto;
+  } else {
+    const proyectoNuevo = await crearProyecto(nuevoProyecto);
+    respuesta = proyectoNuevo;
+  }
+  return respuesta;
+};
+
+const modificarProyecto = async (idProyecto, cambios) => {
+  let respuesta = {};
+  const proyectoModificado = await Proyecto
+    .findByIdAndUpdate(idProyecto, cambios)
+    .catch(err => debug(chalk.red.bold(err)));
+  if (proyectoModificado) {
+    respuesta.proyecto = proyectoModificado;
+  } else {
+    const error = creaError("El proyecto modificado no existe", 404);
+    respuesta.error = error;
+  }
+  return respuesta;
+};
+
+const borrarProyecto = async (idProyecto) => {
+  let respuesta = {};
+  const proyectoBorrado = await Proyecto
+    .findByIdAndDelete(idProyecto)
+    .catch(err => debug(chalk.red.bold(err)));
+  if (proyectoBorrado) {
+    respuesta.proyecto = proyectoBorrado;
+  } else {
+    const error = creaError("La factura no existe", 404);
+    respuesta.error = error;
+  }
+  return respuesta;
+};
+
 module.exports = {
   getProyectos,
   getProyecto,
-  crearProyecto
+  crearProyecto,
+  sustituirProyecto,
+  modificarProyecto,
+  borrarProyecto
 };

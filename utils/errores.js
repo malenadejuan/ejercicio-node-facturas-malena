@@ -1,3 +1,5 @@
+require("dotenv").config();
+const debug = require("debug")("errores");
 const chalk = require("chalk");
 const { validationResult } = require("express-validator");
 
@@ -41,6 +43,7 @@ const mandaErrores = (err, req, res, next) => {
     codigo: err.codigo || 500,
     mensaje: err.codigo ? err.message : "Ha ocurrido un error general"
   };
+  debug(chalk.red(err));
   res.status(error.codigo).json({ error: true, mensaje: error.mensaje });
 };
 
