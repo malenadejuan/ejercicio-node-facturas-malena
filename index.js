@@ -5,6 +5,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const { program } = require("commander");
 const chalk = require("chalk");
+require("./db/mongoDB");
 const options = require("./parametrosCLI");
 const { mandaErrores, notFoundError } = require("./utils/errores");
 const rutasFacturas = require("./rutas/facturas");
