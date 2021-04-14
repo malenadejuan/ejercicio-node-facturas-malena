@@ -1,5 +1,7 @@
 const express = require("express");
-const { getProyectos } = require("../controladores/proyectos");
+const { check } = require("express-validator");
+const { getProyectos, getProyecto, compruebaId, crearProyecto } = require("../controladores/proyectos");
+const { idError } = require("../utils/errores");
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
@@ -22,13 +24,24 @@ router.get("/finalizados", async (req, res, next) => {
   const respuesta = await getProyectos(queries, "finalizado");
   res.json(respuesta);
 });
-router.get("/proyecto/:idProyecto", (req, res, next) => {
-  const respuesta = "Detalle de un proyecto a partir de su id";
-  res.json(respuesta);
+router.get("/proyecto/:idProyecto", async (req, res, next) => {
+  const id = req.params.idProyecto;
+  const respuesta = await getProyecto(id);
+  if (respuesta.error) {
+    return next(respuesta.error);
+  } else {
+    res.json(respuesta.proyecto);
+  }
 });
-router.post("/proyecto", (req, res, next) => {
-  const respuesta = "Añadir nuevo proyecto (devoliendo el nuevo proyecto)";
-  res.json(respuesta);
+router.post("/proyecto", async (req, res, next) => {
+  const nuevoProyecto = req.body;
+  const respuesta = await crearProyecto(nuevoProyecto);
+  console.log(respuesta);
+  if (respuesta.error) {
+    return next(respuesta.error);
+  } else {
+    res.json(respuesta.proyecto);
+  }
 });
 router.put("/proyecto/:idProyecto", (req, res, next) => {
   const respuesta = "Sustituir un proyecto por otro a partir de su id, devuelve el proyecto nuevo";

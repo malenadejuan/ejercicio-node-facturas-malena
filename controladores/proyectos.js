@@ -1,9 +1,15 @@
+const chalk = require("chalk");
 const Proyecto = require("../db/modelos/proyecto");
+const { creaError } = require("../utils/errores");
 
 const respuesta = proyectos => ({
   total: proyectos.length,
   proyectos
 });
+const respuestaOError = {
+  proyecto: null,
+  error: null
+};
 
 const getProyectos = async (queries, tipo) => {
   const hoy = new Date().getTime();
@@ -28,6 +34,28 @@ const getProyectos = async (queries, tipo) => {
   return respuesta(proyectos);
 };
 
+const getProyecto = async (idProyecto) => {
+  let proyecto = await Proyecto.findById(idProyecto);
+  respuestaOError.proyecto = proyecto;
+  return respuestaOError;
+};
+
+const crearProyecto = async (nuevoProyecto) => {
+  const proyectoRepetido = await Proyecto.findOne({
+    nombre: nuevoProyecto.nombre
+  });
+  if (proyectoRepetido) {
+    const error = creaError("El proyecto ya existe", 409);
+    respuesta.error = error;
+  } else {
+    const nuevoProyectoBD = await Proyecto.create(nuevoProyecto);
+    respuesta.proyecto = nuevoProyectoBD;
+  }
+  return respuesta;
+};
+
 module.exports = {
-  getProyectos
+  getProyectos,
+  getProyecto,
+  crearProyecto
 };
