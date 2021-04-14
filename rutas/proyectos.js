@@ -1,8 +1,10 @@
 const express = require("express");
+const { getProyectos } = require("../controladores/proyectos");
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  const respuesta = "Aquí irá un listado de todos los proyectos";
+router.get("/", async (req, res, next) => {
+  const queries = req.query;
+  const respuesta = await getProyectos(queries);
   res.json(respuesta);
 });
 router.get("/pendientes", (req, res, next) => {
