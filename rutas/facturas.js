@@ -109,11 +109,9 @@ router.patch("/factura/:id",
 router.delete("/factura/:id",
   check("id", "La factura no existe").custom(compruebaId),
   async (req, res, next) => {
-    if (bd === false) {
-      const errorId = idError(req);
-      if (errorId) {
-        return next(errorId);
-      }
+    const errorId = idError(req);
+    if (errorId) {
+      return next(errorId);
     }
     const idFactura = +req.params.id;
     const { factura, error } = bd ? await borrarFacturaSQL(idFactura) : borrarFactura(idFactura);
