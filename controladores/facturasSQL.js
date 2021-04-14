@@ -4,6 +4,11 @@ const { Op } = require("sequelize");
 const Factura = require("../db/modelos/factura");
 const { creaError } = require("../utils/errores");
 
+const compruebaId = idFactura => {
+  const { factura } = getFactura();
+  return factura;
+};
+
 const respuesta = datos => ({
   total: datos.length,
   datos
@@ -133,5 +138,6 @@ module.exports = {
   crearFactura,
   modificarFactura,
   sustituirFactura,
-  borrarFactura
+  borrarFactura,
+  compruebaId
 };

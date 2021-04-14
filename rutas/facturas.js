@@ -1,17 +1,20 @@
 const express = require("express");
 const { check, checkSchema } = require("express-validator");
 const router = express.Router();
-const { getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries, facturaCompletaSchema, facturaParcialSchema, compruebaId } = require("../controladores/facturas");
-const { getFacturas: getFacturasSQL, getFactura: getFacturaSQL, crearFactura: crearFacturaSQL, sustituirFactura: sustituirFacturaSQL, modificarFactura: modificarFacturaSQL, borrarFactura: borrarFacturaSQL } = require("../controladores/facturasSQL");
+const { getFactura, getIngresos, getGastos, crearFactura, borrarFactura, modificarFactura, sustituirFactura, filtrarPorQueries, facturaCompletaSchema, facturaParcialSchema, compruebaId: compruebaIdJSON } = require("../controladores/facturas");
+const { getFacturas: getFacturasSQL, getFactura: getFacturaSQL, crearFactura: crearFacturaSQL, sustituirFactura: sustituirFacturaSQL, modificarFactura: modificarFacturaSQL, borrarFactura: borrarFacturaSQL, compruebaId: compruebaIdBD } = require("../controladores/facturasSQL");
 const options = require("../parametrosCLI");
 const { badRequestError, idError } = require("../utils/errores");
 
 let bd = true;
+let compruebaId;
 
 if (options.datos === "json") {
   bd = false;
+  compruebaId = compruebaIdJSON;
 } else if (options.datos === "bd") {
   bd = true;
+  compruebaId = compruebaIdBD;
 }
 
 router.get("/", async (req, res, next) => {
